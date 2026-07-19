@@ -1,0 +1,16 @@
+{
+  "name": "leadpulse-tracking-snippet",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "node build.mjs",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "verify": "node test/verify.mjs"
+  },
+  "devDependencies": {
+    "esbuild": "^0.23.1",
+    "puppeteer-core": "^23.3.0",
+    "typescript": "^5.5.3"
+  }
+}

@@ -1,0 +1,143 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<title>leadpulse tracker — local test harness</title>
+<style>
+  body { font-family: system-ui, sans-serif; max-width: 760px; margin: 2rem auto; padding: 0 1rem; }
+  h1 { font-size: 1.25rem; }
+  .visitor-id { font-family: monospace; background: #f0f0f0; padding: 0.5rem; border-radius: 4px; word-break: break-all; }
+  .buttons { display: flex; gap: 0.5rem; flex-wrap: wrap; margin: 1rem 0; }
+  button { padding: 0.6rem 1rem; font-size: 0.95rem; cursor: pointer; }
+  #log { border: 1px solid #ccc; border-radius: 4px; height: 320px; overflow-y: auto; padding: 0.5rem; font-family: monospace; font-size: 0.82rem; background: #111; color: #eee; }
+  .row { padding: 2px 0; border-bottom: 1px solid #222; }
+  .ok { color: #7fdc7f; }
+  .fail { color: #ff8080; }
+  .info { color: #9cc; }
+</style>
+</head>
+<body>
+  <h1>leadpulse tracker — local test harness</h1>
+
+  <p>visitor_id: <span class="visitor-id" id="visitor-id">(not yet initialized)</span></p>
+
+  <div class="buttons">
+    <button id="btn-product">View Product</button>
+    <button id="btn-search">Search</button>
+    <button id="btn-category">View Category</button>
+    <button id="btn-checkout">Simulate Checkout (identify)</button>
+    <button id="btn-rapid">Rapid-click "View Product" x5 (debounce test)</button>
+  </div>
+
+  <div id="log"></div>
+
+  <script>
+    // Points at the Phase 2 backend. Real api_key for the Acme test org from
+    // Phase 1 seed data — not a placeholder, this key actually resolves.
+    window.leadpulseConfig = {
+      apiBase: 'http://localhost:4000',
+      apiKey: 'seedapikeyacme000000000000000000000000000000000000',
+      debug: true,
+    };
+  </script>
+
+  <!--
+    Real theme usage would load this with `defer` (or async), so the
+    tracker never blocks page render. This harness loads it synchronously on
+    purpose: the page is nothing but a test rig, and a synchronous load
+    means every button handler below is guaranteed window.leadpulse exists
+    by the time a click can happen — no queue-vs-init race to reason about
+    in the test itself. See TESTING.md for the real async loading pattern.
+  -->
+  <script src="../dist/leadpulse-tracker.min.js"></script>
+
+  <script>
+    const logEl = document.getElementById('log');
+
+    function logLine(text, cls) {
+      const div = document.createElement('div');
+      div.className = 'row' + (cls ? ' ' + cls : '');
+      const time = new Date().toISOString().split('T')[1].replace('Z', '');
+      div.textContent = '[' + time + '] ' + text;
+      logEl.appendChild(div);
+      logEl.scrollTop = logEl.scrollHeight;
+    }
+
+    // api.ts dispatches this after every fetch settles, success or failure —
+    // it is the only way to see the real HTTP status without opening devtools.
+    window.addEventListener('leadpulse:request', function (e) {
+      const d = e.detail;
+      if (d.ok) {
+        logLine('POST ' + d.endpoint + ' -> ' + d.status, 'ok');
+      } else if (d.status !== null) {
+        logLine('POST ' + d.endpoint + ' -> ' + d.status + ' (error response)', 'fail');
+      } else {
+        logLine('POST ' + d.endpoint + ' -> network error: ' + d.error, 'fail');
+      }
+    });
+
+    document.getElementById('visitor-id').textContent =
+      (window.leadpulse && window.leadpulse.getVisitorId()) || '(tracking disabled)';
+    logLine('page loaded, visitor_id = ' + document.getElementById('visitor-id').textContent, 'info');
+
+    // Shapes below match the SaleAssist-style payload from the Phase 2 brief.
+
+    document.getElementById('btn-product').addEventListener('click', function () {
+      logLine('track(productDetail) fired', 'info');
+      window.leadpulse.track('productDetail', {
+        view_data: { url: location.href },
+        actionField: { list: 'product-detail-page' },
+        products: [{
+          name: 'Trailblazer Runner',
+          id: 'sku-1042',
+          price: '4999.00',
+          brand: 'Acme',
+          category: 'Footwear/Running',
+          variant: 'Blue / 9',
+        }],
+      });
+    });
+
+    document.getElementById('btn-search').addEventListener('click', function () {
+      logLine('track(search) fired', 'info');
+      window.leadpulse.track('search', {
+        view_data: { url: location.href + '?q=running+shoes' },
+        actionField: { list: 'search-results', option: 'running shoes' },
+        products: [],
+      });
+    });
+
+    document.getElementById('btn-category').addEventListener('click', function () {
+      logLine('track(category_view) fired', 'info');
+      window.leadpulse.track('category_view', {
+        view_data: { url: location.href + '#/c/footwear' },
+        actionField: { list: 'category-grid' },
+      });
+    });
+
+    document.getElementById('btn-checkout').addEventListener('click', function () {
+      logLine('identify() fired', 'info');
+      window.leadpulse.identify({
+        phone: '+919876500001',
+        email: 'harness-checkout@example.com',
+        name: 'Harness Checkout Lead',
+        city: 'Bengaluru',
+        state: 'Karnataka',
+        country: 'IN',
+        pincode: '560001',
+      });
+    });
+
+    document.getElementById('btn-rapid').addEventListener('click', function () {
+      logLine('firing productClick x5 within <2s (only 1 should reach the server)', 'info');
+      for (let i = 0; i < 5; i++) {
+        window.leadpulse.track('productClick', {
+          view_data: { url: location.href },
+          actionField: { list: 'rapid-test', id: 'sku-9999' },
+          products: [{ name: 'Debounce Test Item', id: 'sku-9999', price: '1.00' }],
+        });
+      }
+    });
+  </script>
+</body>
+</html>
