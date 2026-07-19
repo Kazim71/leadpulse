@@ -4,6 +4,38 @@ Reverse-chronological. One entry per task/phase.
 
 ---
 
+## 2026-07-20 — Shopify theme wiring: product/search/category snippets
+
+Authored (not executed — no Shopify admin access exists in this
+environment) three Liquid+JS snippets for the "Aarav Electronics" duplicate
+theme, wiring real template data into `window.leadpulse.track()` calls:
+`productDetail` (product page), `search` (search results), `category_view`
+(collection page). Builds on the already-live `page_view` auto-tracking.
+Does not modify `tracking-snippet/src/tracker.ts` or the built dist file —
+Liquid-side only. Full reference copy saved to
+`tracking-snippet/shopify-integration.md`.
+
+Key correctness detail surfaced before writing anything: `defer`/`async`
+have no effect on inline `<script>` tags (only on scripts with a `src`), so
+an inline snippet placed in a template can execute before a deferred
+tracker bundle finishes loading. Since `theme.liquid` can't be inspected
+directly to confirm the stub-queue pattern from `TESTING.md` is present,
+every snippet waits for `DOMContentLoaded` and logs a `console.warn` if
+`window.leadpulse` still isn't ready, rather than silently dropping the
+event on a load-order race.
+
+Event payload shapes were checked against
+`backend/src/modules/events/events.schema.ts` before writing any Liquid —
+in particular, the search term was placed in `actionField.option` to match
+the exact shape already used by `supabase/seed.sql`'s seeded search event,
+rather than inventing a new field.
+
+**Not verified end-to-end** — unlike every other entry in this changelog,
+there is no live-database confirmation here yet, because these snippets
+haven't been pasted into the real theme. See `docs/TODO.md`.
+
+---
+
 ## 2026-07-19 — Contact form verified end-to-end
 
 Migration `0004_contact_inquiries.sql` was applied (by the user, in the

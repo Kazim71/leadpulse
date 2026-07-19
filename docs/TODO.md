@@ -64,13 +64,26 @@ not a quick fix.
 
 ## Not built yet
 
-### Shopify integration
-The tracking snippet (`tracking-snippet/`) has been built and verified
-end-to-end against a local test harness (`test/local.html`) and the live
-backend, but has **never been pasted into or tested against a real Shopify
-theme.liquid**. No Shopify credentials exist for this project. This was
-explicitly out of scope for Phase 3 (a "local-only build-and-test phase") —
-a human copies the finished snippet into a real theme later.
+### Shopify integration — partially live, product/search/category pending
+**Update 2026-07-20:** this is no longer "never pasted" — the tracker
+bundle is loaded on a real Shopify theme ("Aarav Electronics," a
+duplicate/clone theme) for the "Shopify Test" organization, and `page_view`
+auto-tracking is confirmed landing correctly in Supabase.
+
+Still pending: three Liquid+JS snippets were authored for
+`productDetail` (product page), `search` (search results), and
+`category_view` (collection page) — see
+`tracking-snippet/shopify-integration.md` for the exact code and file
+placement. **Not yet pasted into the live theme or verified against
+Supabase** — no Shopify admin access exists in this environment, so these
+were handed off as copy-paste instructions rather than confirmed working.
+**Unblocks when:** each snippet is manually pasted into the theme editor
+and a test page load is checked against the verification query in
+`shopify-integration.md`.
+
+Also out of scope so far: `addToCart` tracking on the cart button/drawer —
+not requested in the product/search/category task, flagged as a possible
+follow-up in `shopify-integration.md`.
 
 ### Dashboard is not deployed anywhere
 `frontend/` runs locally (`npm run dev` / `npm run start`) and has been
