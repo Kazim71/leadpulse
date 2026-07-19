@@ -34,8 +34,12 @@
   <script>
     // Points at the Phase 2 backend. Real api_key for the Acme test org from
     // Phase 1 seed data — not a placeholder, this key actually resolves.
+    //
+    // Pointed at the deployed Render backend, not localhost — so this
+    // harness now proves the live API works, not just the local dev server.
+    // Swap apiBase back to 'http://localhost:4000' to test a local backend.
     window.leadpulseConfig = {
-      apiBase: 'http://localhost:4000',
+      apiBase: 'https://leadpulse-api-m52p.onrender.com',
       apiKey: 'seedapikeyacme000000000000000000000000000000000000',
       debug: true,
     };

@@ -1,0 +1,23 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html {
+    -webkit-font-smoothing: antialiased;
+  }
+  body {
+    @apply bg-ink-50 text-ink-800 dark:bg-ink-950 dark:text-ink-200;
+  }
+  /* Clay focus ring everywhere — one of the cheapest ways to make an app
+     feel like a single designed system rather than assembled parts. */
+  :focus-visible {
+    @apply outline-none ring-2 ring-blush-500/60 ring-offset-2 ring-offset-ink-50 dark:ring-offset-ink-950;
+  }
+}
+
+@layer utilities {
+  .tabular-nums {
+    font-variant-numeric: tabular-nums;
+  }
+}

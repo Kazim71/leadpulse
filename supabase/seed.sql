@@ -138,4 +138,25 @@ insert into public.events
    '{"view_data":{"url":"https://rival-test.dev/"},"actionField":{}}'::jsonb,
    'Delhi', 'Delhi', 'IN', '110001', now() - interval '30 minutes');
 
+-- --------------------------------------------------------------
+-- platform_admins (requires migration 0003)
+-- --------------------------------------------------------------
+-- Create a SECOND auth user for the super-admin before running this:
+--   Dashboard -> Authentication -> Users -> "Add user"
+--     email: super@leadcapsule.dev
+-- Then find/replace PASTE_SUPER_ADMIN_UUID_HERE below with its UUID.
+--
+-- This must be a different auth user from the org-admin seeded above.
+-- The two roles are mutually exclusive in the UI: a user in platform_admins
+-- routes to /super-admin, everyone else routes to /dashboard. Granting both
+-- to one account makes the routing ambiguous and the isolation test
+-- meaningless.
+--
+-- Commented out by default so seed.sql stays runnable before 0003 is
+-- applied. Uncomment once you have the UUID.
+--
+-- insert into public.platform_admins (user_id)
+-- values ('PASTE_SUPER_ADMIN_UUID_HERE')
+-- on conflict (user_id) do nothing;
+
 commit;
