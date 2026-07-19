@@ -22,6 +22,17 @@ it once on screen for the platform admin to relay out of band.
 **Unblocks when:** custom SMTP is configured in Supabase Auth settings, then
 swap to `inviteUserByEmail()` and drop the temp-password path entirely.
 
+### Contact form submissions land in a DB table only
+**Where:** `frontend/src/components/marketing/ContactForm.tsx`,
+`supabase/migrations/0004_contact_inquiries.sql`
+Same root cause as the admin-invite gap above: no SMTP is configured, so
+there is no email notification when a visitor submits the `/contact` form.
+Submissions land in `contact_inquiries` and are readable only by
+`platform_admins` — check the table manually (or via the Supabase SQL
+editor) until SMTP exists. **Unblocks when:** SMTP is configured; then add a
+notification (email, or a row in the existing notification-bell signal
+pattern from the dashboard feature expansion) on insert.
+
 ---
 
 ## Deferred by design (explicit engineering tradeoff, not a gap)

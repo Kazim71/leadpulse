@@ -4,6 +4,79 @@ Reverse-chronological. One entry per task/phase.
 
 ---
 
+## 2026-07-19 — Contact form verified end-to-end
+
+Migration `0004_contact_inquiries.sql` was applied (by the user, in the
+Supabase SQL editor — DDL can't run through PostgREST). Ran the prepared
+`frontend/test/verify-contact-form.mjs` against the live database: a real
+browser submission through `/contact` shows the success state and lands a
+row with the correct `name`/`email`/`message`; a direct anon-key client can
+INSERT (confirming the RLS policy actually grants it, not just that the
+form's own request happened to work); the same anon-key client's SELECT
+attempt on that row returns an empty result rather than an error or the row
+itself (confirming RLS blocks the read rather than merely that nobody built
+a read path); and a platform-admin login can read the row
+(`is_platform_admin()` policy working in the other direction). All 6
+checks passed; test rows removed after, table confirmed empty. The
+"blocked" note from the prior entry is resolved — see `docs/TODO.md`,
+which now reflects only the SMTP-notification gap, not a verification gap.
+
+---
+
+## 2026-07-19 — Public marketing site
+
+Built the full public site: landing page at `/` (auth-aware) plus four
+always-public pages (`/about`, `/features`, `/product`, `/contact`),
+sharing one header/nav/footer via a new Next.js route group,
+`frontend/src/app/(marketing)/`. `/blog` and `/pricing` explicitly out of
+scope, per the brief.
+
+- **Auth-aware `/`**: reuses `getViewer()` — the same role-resolution
+  function every other protected route already uses — rather than
+  reimplementing it. Anonymous visitors see the landing page; `org_admin`
+  → `/dashboard`, `platform_admin` → `/super-admin`, `unassigned` →
+  `/pending`, exactly matching the existing role model. The old root
+  `src/app/page.tsx` (pure redirect, no content) was replaced by
+  `(marketing)/page.tsx`, since a route group's `page.tsx` maps to the same
+  URL and both can't coexist.
+- **Middleware updated**: `frontend/src/lib/supabase/middleware.ts`'s
+  public-path allowlist gained `/`, `/about`, `/contact`, `/features`,
+  `/product` — without this, an anonymous visit to any of the four pages
+  would have been bounced to `/login` before ever reaching the page
+  component. `/dashboard` and `/super-admin` protections are untouched.
+- **Contact form**: real insert into a new `contact_inquiries` table
+  (`supabase/migrations/0004_contact_inquiries.sql`) via the anon-key
+  browser client — no backend API involved, consistent with "frontend
+  reads/writes via anon key + RLS." This is the first table in the project
+  where `anon` gets real write access; every prior table's policy was "anon
+  gets nothing" (see 0001's Grants section) because writes went through the
+  trusted backend's service_role instead. Scoped narrowly: anon may INSERT
+  only, `is_platform_admin()` (reused from 0003, not reinvented) gates
+  SELECT.
+- **`/features` copy verified against the codebase before writing it** —
+  the 11 event types are copy-pasted from `EVENT_TYPES` in
+  `events.schema.ts`, not summarized from memory; CSV export is deliberately
+  **not** listed (confirmed absent via grep); "always-current," not
+  "real-time," describes the dashboard, since it's `force-dynamic`
+  Server Components on each request, not a websocket/polling live feed —
+  claiming "real-time" would have overstated what's built.
+- No invented usage statistics on the landing page (brief explicitly ruled
+  this out) — the capabilities section frames real, built capabilities
+  instead of fabricated numbers like lead counts.
+
+**Verified:** production build (17/17 routes). 14/14 checks in a real
+headless-Chrome run: anonymous `/` renders the full landing page; logging
+in as an actual org-admin and as an actual platform-admin each redirect `/`
+to the correct destination; all four public pages render with the shared
+header/footer and are reachable via real nav-link clicks; both themes
+render correctly on all five pages.
+
+Migration `0004_contact_inquiries.sql` was pending at the time of this
+entry; end-to-end verification of the contact form and its RLS policies is
+recorded in the entry above this one, dated the same day.
+
+---
+
 ## 2026-07-19 — Nav-highlight fix + dashboard feature expansion
 
 **Bug fix (Part 1):** `activeHref` on the sidebar nav was a hardcoded string
