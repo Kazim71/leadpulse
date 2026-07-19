@@ -2,7 +2,13 @@ import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { requirePlatformAdmin } from '@/lib/auth';
 import { createClient } from '@/lib/supabase/server';
-import { getLeads, getOrganization, getOrgSummary } from '@/lib/queries';
+import {
+  getEventCountTrend,
+  getEventsOverTime,
+  getLeads,
+  getOrganization,
+  getOrgSummary,
+} from '@/lib/queries';
 import { LeadsTable } from '@/components/LeadsTable';
 import { SummaryPanel } from '@/components/SummaryPanel';
 
@@ -28,9 +34,11 @@ export default async function SuperAdminOrgPage({
   // genuinely bogus rather than merely forbidden.
   if (!org) notFound();
 
-  const [leads, summary] = await Promise.all([
+  const [leads, summary, eventsOverTime, eventTrend] = await Promise.all([
     getLeads(supabase, params.organizationId),
     getOrgSummary(supabase, params.organizationId),
+    getEventsOverTime(supabase, params.organizationId),
+    getEventCountTrend(supabase, params.organizationId),
   ]);
 
   return (
@@ -48,7 +56,7 @@ export default async function SuperAdminOrgPage({
         </p>
       </div>
 
-      <SummaryPanel summary={summary} />
+      <SummaryPanel summary={summary} eventsOverTime={eventsOverTime} eventTrend={eventTrend} />
 
       <div>
         <h2 className="mb-4 font-display text-2xl text-ink-900 dark:text-ink-50">Leads</h2>

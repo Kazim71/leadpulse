@@ -90,6 +90,24 @@ underlying data (`getLeads()` in `frontend/src/lib/queries.ts`) is already
 shaped as one row per contact with an event list, so this is a formatting
 task on already-available data, not a new query.
 
+### No date-range filter control in the UI
+The dashboard feature-expansion task assumed "the existing date-range filter
+already in the UI" when specifying chart behavior. No such filter exists —
+confirmed by grepping the codebase before building the charts. The new
+`getEventsOverTime()` / `getPlatformEventsOverTime()` queries
+(`frontend/src/lib/queries.ts`) accept a `days` parameter and default to a
+fixed 14-day window instead. Wiring a real date-range picker through to
+these functions is straightforward (the parameter already exists) but the
+UI control itself is not built.
+
+### CSV export sparkline on stat cards
+`StatCard` (`frontend/src/components/ui/StatCard.tsx`) supports a `trend`
+prop (real prior-period percentage, computed by `getEventCountTrend()`) but
+not yet an inline sparkline — the 2026-07-19 feature-expansion brief called
+sparklines a "nice to have," and the trend badge was judged sufficient
+signal for the time invested. Would need a per-day breakdown per stat card
+rather than a single trend query.
+
 ### Per-org tracking snippet self-service
 The super-admin provisioning flow (`/super-admin/new-org`) generates a real,
 working `api_key` for a new organization and displays it once, but there is
@@ -106,3 +124,13 @@ The original Phase 7 brief listed "activity timeline expand" as a
 fast-follow alongside CSV export. It is actually **built** —
 `frontend/src/components/LeadsTable.tsx` has expandable rows showing each
 lead's `recentEvents`. Only CSV export remains outstanding from that pairing.
+
+### Nav-highlight bug on `/super-admin/new-org`
+Fixed 2026-07-19. `activeHref` used to be a hardcoded string passed once per
+layout (`super-admin/layout.tsx` always passed `"/super-admin"`), so the
+sidebar could never reflect the actual route. Replaced with
+`resolveActiveHref()` in `frontend/src/components/SidebarNav.tsx`, which
+derives the active item from `usePathname()` using longest-prefix matching
+— needed so `/super-admin/org/[id]` still resolves to "Companies" while
+`/super-admin/new-org` resolves to "Provision", rather than both matching
+the shorter `/super-admin` prefix.

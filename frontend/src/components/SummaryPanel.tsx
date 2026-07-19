@@ -1,7 +1,8 @@
 import { Card, CardBody, CardHeader } from './ui/Card';
-import { StatCard } from './ui/StatCard';
-import { ACCENT_TONES, Badge, categoryTone, statusTone } from './ui/Badge';
-import type { OrgSummary } from '@/lib/queries';
+import { StatCard, type StatTrend } from './ui/StatCard';
+import { Badge, categoryTone, statusTone } from './ui/Badge';
+import { EventsOverTimeChart } from './charts/EventsOverTimeChart';
+import type { DailyCount, OrgSummary } from '@/lib/queries';
 
 /** Chart-series fills, in the accent rotation order. */
 const BAR_TONES = ['bg-blush-400', 'bg-lilac-400', 'bg-mint-400', 'bg-peach-400'];
@@ -15,8 +16,22 @@ const DOT_TONES: Record<string, string> = {
   brick: 'bg-brick-300',
 };
 
-/** Presentational only — receives the computed summary as props. */
-export function SummaryPanel({ summary }: { summary: OrgSummary }) {
+/**
+ * Presentational only — receives the computed summary as props.
+ *
+ * `eventsOverTime` and `eventTrend` are optional so any caller that hasn't
+ * been updated to fetch them still compiles and renders — they simply lose
+ * the chart/trend badge rather than breaking.
+ */
+export function SummaryPanel({
+  summary,
+  eventsOverTime,
+  eventTrend,
+}: {
+  summary: OrgSummary;
+  eventsOverTime?: DailyCount[];
+  eventTrend?: StatTrend;
+}) {
   const identifiedPct =
     summary.eventCount === 0
       ? 0
@@ -26,7 +41,7 @@ export function SummaryPanel({ summary }: { summary: OrgSummary }) {
     <div className="space-y-6">
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         <StatCard label="Contacts" value={summary.contactCount} tone="blush" />
-        <StatCard label="Events" value={summary.eventCount} tone="lilac" />
+        <StatCard label="Events" value={summary.eventCount} tone="lilac" trend={eventTrend} />
         <StatCard
           label="Identified"
           value={`${identifiedPct}%`}
@@ -35,6 +50,19 @@ export function SummaryPanel({ summary }: { summary: OrgSummary }) {
         />
         <StatCard label="Anonymous events" value={summary.anonymousEventCount} tone="peach" />
       </div>
+
+      {eventsOverTime ? (
+        <Card>
+          <CardHeader>
+            <h3 className="font-display text-lg text-ink-900 dark:text-ink-100">
+              Events, last {eventsOverTime.length} days
+            </h3>
+          </CardHeader>
+          <CardBody>
+            <EventsOverTimeChart data={eventsOverTime} />
+          </CardBody>
+        </Card>
+      ) : null}
 
       <div className="grid gap-6 lg:grid-cols-3">
         <Card>

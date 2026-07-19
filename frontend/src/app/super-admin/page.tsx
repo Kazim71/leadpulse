@@ -1,7 +1,9 @@
 import { requirePlatformAdmin } from '@/lib/auth';
 import { createClient } from '@/lib/supabase/server';
-import { getContactCountsByOrg, getOrganizations } from '@/lib/queries';
+import { getContactCountsByOrg, getOrganizations, getPlatformEventsOverTime } from '@/lib/queries';
 import { CompanyGrid } from '@/components/CompanyGrid';
+import { Card, CardBody, CardHeader } from '@/components/ui/Card';
+import { EventsOverTimeChart } from '@/components/charts/EventsOverTimeChart';
 
 export const dynamic = 'force-dynamic';
 
@@ -9,9 +11,13 @@ export default async function SuperAdminPage() {
   await requirePlatformAdmin();
 
   const supabase = createClient();
-  const [organizations, contactCounts] = await Promise.all([
+  const [organizations, contactCounts, platformEvents] = await Promise.all([
     getOrganizations(supabase),
     getContactCountsByOrg(supabase),
+    // Cross-org aggregate — the one deliberate exception to "every query
+    // filters organization_id", documented in queries.ts. This is the
+    // platform-wide view the super-admin role exists to see.
+    getPlatformEventsOverTime(supabase),
   ]);
 
   return (
@@ -23,6 +29,18 @@ export default async function SuperAdminPage() {
           the platform
         </p>
       </div>
+
+      <Card>
+        <CardHeader>
+          <h2 className="font-display text-lg text-ink-900 dark:text-ink-100">
+            Events across all organizations, last {platformEvents.length} days
+          </h2>
+        </CardHeader>
+        <CardBody>
+          <EventsOverTimeChart data={platformEvents} />
+        </CardBody>
+      </Card>
+
       <CompanyGrid organizations={organizations} contactCounts={contactCounts} />
     </div>
   );

@@ -32,6 +32,28 @@ export interface Lead {
   recentEvents: LeadEvent[];
 }
 
+export interface DailyCount {
+  /** ISO date, `YYYY-MM-DD`, no time component. */
+  date: string;
+  count: number;
+}
+
+export interface TrendStat {
+  current: number;
+  previous: number;
+  /** null when `previous` is 0 — a percentage change from zero is undefined, not "∞%" or "0%". */
+  pctChange: number | null;
+}
+
+export interface ReadySignalLead {
+  id: string;
+  name: string | null;
+  city: string | null;
+  last_seen: string | null;
+  /** Only populated by the platform-wide variant, for the super-admin dropdown. */
+  organizationName?: string;
+}
+
 export interface OrgSummary {
   contactCount: number;
   eventCount: number;
@@ -207,4 +229,175 @@ export async function getOrgSummary(
       [...statusCounts.entries()].map(([status, count]) => ({ status, count })),
     ),
   };
+}
+
+// =====================================================================
+// Added for the dashboard feature-expansion task: charts, trend badges,
+// and the notification bell. Bucketing happens in memory rather than via
+// a Postgres date_trunc RPC, matching the pattern getOrgSummary already
+// established — small enough at current data volume, and it keeps every
+// query here a plain PostgREST select rather than introducing a second
+// query mechanism.
+// =====================================================================
+
+function bucketByDay(timestamps: string[], days: number): DailyCount[] {
+  const buckets = new Map<string, number>();
+
+  // Seed every day in the window with 0 so the chart has no gaps — a day
+  // with no events must render as a zero point, not a missing one.
+  const now = new Date();
+  for (let i = days - 1; i >= 0; i--) {
+    const d = new Date(now);
+    d.setDate(d.getDate() - i);
+    buckets.set(d.toISOString().slice(0, 10), 0);
+  }
+
+  for (const ts of timestamps) {
+    const day = ts.slice(0, 10);
+    if (buckets.has(day)) buckets.set(day, (buckets.get(day) ?? 0) + 1);
+  }
+
+  return [...buckets.entries()].map(([date, count]) => ({ date, count }));
+}
+
+/** Events per day for ONE org, for the org-detail and org-admin charts. */
+export async function getEventsOverTime(
+  supabase: SupabaseClient,
+  organizationId: string,
+  days = 14,
+): Promise<DailyCount[]> {
+  const since = new Date();
+  since.setDate(since.getDate() - (days - 1));
+
+  const { data, error } = await supabase
+    .from('events')
+    .select('created_at')
+    .eq('organization_id', organizationId)
+    .gte('created_at', since.toISOString());
+
+  if (error) throw new Error(`Failed to load event history: ${error.message}`);
+
+  return bucketByDay((data ?? []).map((r) => (r as { created_at: string }).created_at), days);
+}
+
+/**
+ * Events per day across EVERY org — the one deliberate exception to "every
+ * query filters organization_id". This is the super-admin's own aggregate
+ * view, not a per-org query masquerading as one; callers MUST be gated by
+ * requirePlatformAdmin() before this runs, same as every other cross-org
+ * read in this file.
+ */
+export async function getPlatformEventsOverTime(
+  supabase: SupabaseClient,
+  days = 14,
+): Promise<DailyCount[]> {
+  const since = new Date();
+  since.setDate(since.getDate() - (days - 1));
+
+  const { data, error } = await supabase
+    .from('events')
+    .select('created_at')
+    .gte('created_at', since.toISOString());
+
+  if (error) throw new Error(`Failed to load platform event history: ${error.message}`);
+
+  return bucketByDay((data ?? []).map((r) => (r as { created_at: string }).created_at), days);
+}
+
+/**
+ * Event-count trend: this 7-day window vs. the 7 days before it. Computed
+ * from two real `created_at` ranges — never fabricated. `previous === 0`
+ * yields `pctChange: null` rather than a nonsensical infinite percentage.
+ */
+export async function getEventCountTrend(
+  supabase: SupabaseClient,
+  organizationId: string,
+): Promise<TrendStat> {
+  const now = new Date();
+  const weekAgo = new Date(now);
+  weekAgo.setDate(weekAgo.getDate() - 7);
+  const twoWeeksAgo = new Date(now);
+  twoWeeksAgo.setDate(twoWeeksAgo.getDate() - 14);
+
+  const [{ count: current }, { count: previous }] = await Promise.all([
+    supabase
+      .from('events')
+      .select('id', { count: 'exact', head: true })
+      .eq('organization_id', organizationId)
+      .gte('created_at', weekAgo.toISOString()),
+    supabase
+      .from('events')
+      .select('id', { count: 'exact', head: true })
+      .eq('organization_id', organizationId)
+      .gte('created_at', twoWeeksAgo.toISOString())
+      .lt('created_at', weekAgo.toISOString()),
+  ]);
+
+  const cur = current ?? 0;
+  const prev = previous ?? 0;
+
+  return { current: cur, previous: prev, pctChange: prev === 0 ? null : ((cur - prev) / prev) * 100 };
+}
+
+/**
+ * "Ready to contact" signal for the notification bell.
+ *
+ * HONEST LIMITATION: `contacts` has no `updated_at` / status-change
+ * timestamp (see 0001_init_schema.sql), so there is no way to know exactly
+ * when a contact's message_status became 'ready'. What IS real and
+ * derivable: contacts currently marked 'ready' who were active (last_seen)
+ * within the last 24 hours — i.e. "leads worth contacting who showed up
+ * recently," not literally "became ready in the last 24h." That distinction
+ * is surfaced in the UI copy, not just this comment.
+ */
+export async function getReadySignal(
+  supabase: SupabaseClient,
+  organizationId: string,
+): Promise<ReadySignalLead[]> {
+  const since = new Date();
+  since.setHours(since.getHours() - 24);
+
+  const { data, error } = await supabase
+    .from('contacts')
+    .select('id, name, city, last_seen')
+    .eq('organization_id', organizationId)
+    .eq('message_status', 'ready')
+    .gte('last_seen', since.toISOString())
+    .order('last_seen', { ascending: false })
+    .limit(20);
+
+  if (error) throw new Error(`Failed to load ready-lead signal: ${error.message}`);
+  return (data ?? []) as ReadySignalLead[];
+}
+
+/** Platform-wide variant of getReadySignal(), joined with org name for display. */
+export async function getPlatformReadySignal(
+  supabase: SupabaseClient,
+): Promise<ReadySignalLead[]> {
+  const since = new Date();
+  since.setHours(since.getHours() - 24);
+
+  const { data, error } = await supabase
+    .from('contacts')
+    .select('id, name, city, last_seen, organization_id, organizations(name)')
+    .eq('message_status', 'ready')
+    .gte('last_seen', since.toISOString())
+    .order('last_seen', { ascending: false })
+    .limit(20);
+
+  if (error) throw new Error(`Failed to load platform ready-lead signal: ${error.message}`);
+
+  return ((data ?? []) as unknown as Array<{
+    id: string;
+    name: string | null;
+    city: string | null;
+    last_seen: string | null;
+    organizations: { name: string } | null;
+  }>).map((row) => ({
+    id: row.id,
+    name: row.name,
+    city: row.city,
+    last_seen: row.last_seen,
+    organizationName: row.organizations?.name,
+  }));
 }

@@ -1,6 +1,86 @@
 # Changelog
 
-Reverse-chronological. One entry per task/phase. Entries below this point are
+Reverse-chronological. One entry per task/phase.
+
+---
+
+## 2026-07-19 — Nav-highlight fix + dashboard feature expansion
+
+**Bug fix (Part 1):** `activeHref` on the sidebar nav was a hardcoded string
+passed once per layout — `super-admin/layout.tsx` always passed
+`"/super-admin"`, so navigating to `/super-admin/new-org` ("Provision")
+still highlighted "Companies." Replaced with `resolveActiveHref()` in the
+new `frontend/src/components/SidebarNav.tsx`, deriving the active item from
+`usePathname()` with longest-prefix matching (needed so
+`/super-admin/org/[id]` still resolves to "Companies" rather than
+colliding with "Provision"). **Verified** via computed `aria-current` and
+background color on both routes in a real browser, not by reading the code.
+
+**Feature expansion (Part 2), scoped to visual/UX depth only — no schema,
+RLS, auth, or existing query restructuring:**
+
+- **Sidebar collapse**: icon-only collapsed state, persisted to
+  `localStorage` (`lc_sidebar_collapsed`), with hover tooltips on collapsed
+  icons. Extracted the interactive chrome into a new client component,
+  `DashboardChrome.tsx`, composed by the still-server `AppShell.tsx` —
+  `children` (the page's own Server Component tree) passes through the
+  client boundary without being forced to render client-side.
+- **Mobile hamburger overlay**: the sidebar was already `hidden ... lg:block`
+  (unchanged breakpoint); added the missing hamburger button + overlay
+  drawer for everything below `lg`.
+- **Notification bell**: real derived signal, not a fake badge — contacts
+  with `message_status='ready'` and `last_seen` within 24h
+  (`getReadySignal()` / `getPlatformReadySignal()` in `queries.ts`). Honest
+  limitation documented inline: `contacts` has no status-change timestamp,
+  so this is "recently active leads currently marked ready," not literally
+  "became ready in the last 24h" — the UI copy says so rather than
+  overclaiming precision the schema can't support.
+- **Charts**: added `recharts` (justification in a code comment on
+  `EventsOverTimeChart.tsx` — SVG-based, composes as JSX, no second
+  rendering pipeline). One real chart on both the org-admin's
+  `/dashboard/summary` and the super-admin's per-org drill-down
+  (`getEventsOverTime()`, scoped by `organization_id`), plus a genuine
+  cross-org aggregate on the super-admin index page
+  (`getPlatformEventsOverTime()` — documented as the one deliberate
+  exception to "every query filters `organization_id`," since that's the
+  entire point of the platform-wide view). The existing "Events by type"
+  styled-div bars were deliberately left as-is rather than converted to a
+  second chart component — already themed correctly and not worth the
+  churn for this task.
+- **Stat card trends**: `StatCard` gained an optional `trend` prop showing a
+  real week-over-week percentage from `getEventCountTrend()`. Returns
+  `pctChange: null` (rendered as "new") when the prior week has zero events,
+  rather than an infinite or fabricated percentage.
+- **Loading states**: added `loading.tsx` (Next.js route-segment Suspense
+  boundaries) for `/dashboard`, `/dashboard/summary`, `/super-admin`, and
+  `/super-admin/org/[id]`, using new `Skeleton`/`TableSkeleton`/
+  `CardSkeleton`/`CardGridSkeleton` primitives — previously these routes had
+  no loading UI at all.
+- **Empty states**: audited rather than assumed — `LeadsTable` and
+  `CompanyGrid` already had them; `SummaryPanel`'s sub-widgets already
+  handled zero-data per-section. Added one new empty state, inside
+  `EventsOverTimeChart` itself, for a window with zero events.
+
+**Corrected against the brief:** no date-range filter exists anywhere in
+this UI (confirmed by grep before writing any chart code) — the brief's
+"existing date-range filter" didn't exist to plumb into, so the new time-
+series queries take a `days` parameter defaulting to 14 instead. Flagged
+in `docs/TODO.md` rather than silently building a filter control that
+wasn't asked for or scoped.
+
+**Verified:** full production build (13/13 routes); 18/18 checks in a real
+headless-Chrome run covering both nav-highlight routes, sidebar
+collapse+persistence+reload, mobile drawer open/close, the notification
+bell's real dropdown content (confirmed showing the actual seeded
+`Priya Nair` / Acme Test Store row), chart SVG presence in both light and
+dark mode, the trend badge's honest "new" state, and — re-checked, not
+assumed — that the theme toggle, RLS-backed `/super-admin` gating for an
+org admin, and the provisioning route's 403 all still work after the
+refactor.
+
+---
+
+Entries below this point are
 a reconstruction from git history and code comments (only one commit exists
 so far — `11de6b7`, covering Phases 1-3 — everything since is uncommitted
 local work). Going forward, a new entry is appended at the end of every task
