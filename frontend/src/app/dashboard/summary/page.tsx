@@ -17,8 +17,8 @@ export default async function SummaryPage() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="font-display text-3xl text-ink-900 dark:text-ink-50">Summary</h1>
-        <p className="mt-1 text-sm text-ink-500 dark:text-ink-400">
+        <h1 className="font-display text-3xl text-black dark:text-white">Summary</h1>
+        <p className="mt-1 text-sm text-neutral-500 dark:text-neutral-400">
           Aggregate activity across your storefront.
         </p>
       </div>

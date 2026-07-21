@@ -19,8 +19,8 @@ export default async function NewOrgPage() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="font-display text-3xl text-ink-900 dark:text-ink-50">Provision</h1>
-        <p className="mt-1 text-sm text-ink-500 dark:text-ink-400">
+        <h1 className="font-display text-3xl text-black dark:text-white">Provision</h1>
+        <p className="mt-1 text-sm text-neutral-500 dark:text-neutral-400">
           Onboard a new company, then give its team a way in.
         </p>
       </div>

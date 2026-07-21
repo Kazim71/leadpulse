@@ -19,7 +19,7 @@ export function ThemeToggle() {
       type="button"
       aria-label="Toggle color theme"
       onClick={() => setTheme(isDark ? 'light' : 'dark')}
-      className="flex h-9 w-9 items-center justify-center rounded-md border border-ink-200 bg-white text-ink-600 transition-colors hover:border-blush-300 hover:text-blush-700 dark:border-ink-700 dark:bg-ink-900 dark:text-ink-300 dark:hover:text-blush-400"
+      className="flex h-9 w-9 items-center justify-center rounded-md border border-neutral-200 bg-white text-neutral-600 transition-colors hover:border-cinnamon-300 hover:text-cinnamon-700 dark:border-neutral-700 dark:bg-black dark:text-neutral-300 dark:hover:text-cinnamon-400"
     >
       {!mounted ? (
         <span className="block h-4 w-4" />

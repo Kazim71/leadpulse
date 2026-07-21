@@ -3,7 +3,7 @@ import type { ReactNode } from 'react';
 export function Card({ children, className = '' }: { children: ReactNode; className?: string }) {
   return (
     <div
-      className={`rounded-xl border border-ink-200 bg-white shadow-card dark:border-ink-800 dark:bg-ink-900 ${className}`}
+      className={`rounded-xl border border-neutral-200 bg-white shadow-card dark:border-neutral-800 dark:bg-black ${className}`}
     >
       {children}
     </div>
@@ -11,7 +11,7 @@ export function Card({ children, className = '' }: { children: ReactNode; classN
 }
 
 export function CardHeader({ children }: { children: ReactNode }) {
-  return <div className="border-b border-ink-200 px-5 py-4 dark:border-ink-800">{children}</div>;
+  return <div className="border-b border-neutral-200 px-5 py-4 dark:border-neutral-800">{children}</div>;
 }
 
 export function CardBody({ children, className = '' }: { children: ReactNode; className?: string }) {

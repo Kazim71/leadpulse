@@ -19,38 +19,36 @@ const FLOW = [
 
 export default function ProductPage() {
   return (
-    <section className="mx-auto max-w-3xl px-6 py-20">
-      <h1 className="font-display text-4xl text-ink-900 dark:text-ink-50">
+    <section className="mx-auto max-w-3xl px-6 py-24">
+      <h1 className="font-marketingDisplay text-5xl leading-tight text-black dark:text-white sm:text-6xl">
         Sits alongside your store, not instead of it
       </h1>
-      <p className="mt-5 text-lg text-ink-600 dark:text-ink-400">
-        LeadCapsule isn&rsquo;t a replacement for your storefront, your CRM, or
+      <p className="mt-6 text-lg text-neutral-600 dark:text-neutral-400">
+        NorthQu isn&rsquo;t a replacement for your storefront, your CRM, or
         whatever you already use to run checkout. It fills a gap those tools
         leave open: the browsing that happens before someone becomes a
         customer, and the moment it stops being anonymous.
       </p>
 
-      <div className="mt-14 space-y-10">
+      <div className="mt-16 space-y-12">
         {FLOW.map((step, i) => (
-          <div key={step.label} className="flex gap-5">
-            <span className="flex h-9 w-9 flex-none items-center justify-center rounded-full bg-mint-100 font-display text-lg text-mint-800 dark:bg-mint-950 dark:text-mint-300">
+          <div key={step.label} className="flex gap-6">
+            <span className="flex h-10 w-10 flex-none items-center justify-center rounded-full border border-neutral-200 dark:border-neutral-800 bg-brand-ivory dark:bg-neutral-900 font-marketingDisplay text-lg text-black dark:text-white">
               {i + 1}
             </span>
             <div>
-              <h2 className="font-display text-xl text-ink-900 dark:text-ink-100">{step.label}</h2>
-              <p className="mt-1.5 text-sm leading-relaxed text-ink-600 dark:text-ink-400">
-                {step.body}
-              </p>
+              <h2 className="font-marketingDisplay text-xl text-black dark:text-white">{step.label}</h2>
+              <p className="mt-2.5 text-base leading-relaxed text-neutral-600 dark:text-neutral-400">{step.body}</p>
             </div>
           </div>
         ))}
       </div>
 
-      <div className="mt-16 rounded-xl border border-ink-200 bg-white p-6 dark:border-ink-800 dark:bg-ink-900">
-        <p className="text-sm text-ink-600 dark:text-ink-400">
+      <div className="mt-16 rounded-2xl border border-neutral-200 dark:border-neutral-800 bg-brand-ivory dark:bg-neutral-900 p-7">
+        <p className="text-base leading-relaxed text-neutral-600 dark:text-neutral-400">
           In practice: an e-commerce store keeps Shopify for checkout and
           inventory, keeps its usual customer-support tools for conversations
-          already in progress, and adds LeadCapsule as the layer that catches
+          already in progress, and adds NorthQu as the layer that catches
           everyone in between — the visitor who searched, looked at three
           products, and left, whose identity only shows up later.
         </p>

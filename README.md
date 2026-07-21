@@ -1,8 +1,8 @@
-# LeadCapsule
+# Northcue
 
-_(repo/folder names remain `leadpulse` — that was the working name before the product was rebranded to LeadCapsule mid-project. Renaming folders was deliberately deferred to avoid churn; user-facing text says LeadCapsule everywhere.)_
+_(repo/folder names remain `leadpulse` — that was the original working name. The product was rebranded once to "LeadCapsule" mid-project, then again to "Northcue"; user-facing text now says Northcue everywhere. Folder/repo names were deliberately left unchanged both times to avoid churn — see `docs/CHANGELOG.md` for exactly what each rebrand touched.)_
 
-LeadCapsule is a multi-tenant lead-capture platform for e-commerce storefronts. A small tracking snippet sits on a client's site and records anonymous visitor behavior (page views, product views, searches, cart actions) against that client's own tenant. When the visitor later gives up a phone number or email — at checkout, in a form — the backend links that identity to everything they did anonymously before, so a business ends up with real leads and full context instead of just a form submission. A super-admin layer lets the platform owner onboard new client companies and see aggregate activity across all of them; each client's own admins only ever see their own data, enforced at the database level, not just in the UI.
+Northcue is a multi-tenant lead-capture platform for e-commerce storefronts. A small tracking snippet sits on a client's site and records anonymous visitor behavior (page views, product views, searches, cart actions) against that client's own tenant. When the visitor later gives up a phone number or email — at checkout, in a form — the backend links that identity to everything they did anonymously before, so a business ends up with real leads and full context instead of just a form submission. A super-admin layer lets the platform owner onboard new client companies and see aggregate activity across all of them; each client's own admins only ever see their own data, enforced at the database level, not just in the UI.
 
 ## Architecture
 

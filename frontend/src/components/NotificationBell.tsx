@@ -33,23 +33,23 @@ export function NotificationBell({ leads }: { leads: ReadySignalLead[] }) {
         type="button"
         aria-label="Notifications"
         onClick={() => setOpen((v) => !v)}
-        className="relative flex h-9 w-9 items-center justify-center rounded-md border border-ink-200 bg-white text-ink-600 transition-colors hover:border-blush-300 hover:text-blush-700 dark:border-ink-700 dark:bg-ink-900 dark:text-ink-300 dark:hover:text-blush-400"
+        className="relative flex h-9 w-9 items-center justify-center rounded-md border border-neutral-200 bg-white text-neutral-600 transition-colors hover:border-cinnamon-300 hover:text-cinnamon-700 dark:border-neutral-700 dark:bg-black dark:text-neutral-300 dark:hover:text-cinnamon-400"
       >
         <BellIcon />
         {count > 0 ? (
-          <span className="absolute -right-1 -top-1 flex h-4 min-w-4 items-center justify-center rounded-full bg-blush-600 px-1 text-[10px] font-semibold leading-none text-white">
+          <span className="absolute -right-1 -top-1 flex h-4 min-w-4 items-center justify-center rounded-full bg-cinnamon-600 px-1 text-[10px] font-semibold leading-none text-white">
             {count > 9 ? '9+' : count}
           </span>
         ) : null}
       </button>
 
       {open ? (
-        <div className="absolute right-0 z-50 mt-2 w-80 rounded-lg border border-ink-200 bg-white p-3 shadow-pop dark:border-ink-700 dark:bg-ink-900">
-          <p className="mb-2 text-2xs font-medium uppercase tracking-wider text-ink-500 dark:text-ink-400">
+        <div className="absolute right-0 z-50 mt-2 w-80 rounded-lg border border-neutral-200 bg-white p-3 shadow-pop dark:border-neutral-700 dark:bg-black">
+          <p className="mb-2 text-2xs font-medium uppercase tracking-wider text-neutral-500 dark:text-neutral-400">
             Ready to contact · last 24h
           </p>
           {count === 0 ? (
-            <p className="py-3 text-center text-sm text-ink-500 dark:text-ink-400">
+            <p className="py-3 text-center text-sm text-neutral-500 dark:text-neutral-400">
               No recently active leads are marked ready right now.
             </p>
           ) : (
@@ -57,17 +57,17 @@ export function NotificationBell({ leads }: { leads: ReadySignalLead[] }) {
               {leads.map((lead) => (
                 <li
                   key={lead.id}
-                  className="rounded-md px-2 py-2 text-sm hover:bg-ink-50 dark:hover:bg-ink-800"
+                  className="rounded-md px-2 py-2 text-sm hover:bg-white dark:hover:bg-neutral-800"
                 >
-                  <p className="font-medium text-ink-900 dark:text-ink-100">
+                  <p className="font-medium text-black dark:text-neutral-100">
                     {lead.name ?? 'Unnamed lead'}
                     {lead.organizationName ? (
-                      <span className="ml-1.5 font-normal text-ink-500 dark:text-ink-400">
+                      <span className="ml-1.5 font-normal text-neutral-500 dark:text-neutral-400">
                         · {lead.organizationName}
                       </span>
                     ) : null}
                   </p>
-                  <p className="text-xs text-ink-500 dark:text-ink-400">
+                  <p className="text-xs text-neutral-500 dark:text-neutral-400">
                     {lead.city ?? 'Unknown location'}
                     {lead.last_seen ? ` · seen ${new Date(lead.last_seen).toLocaleString()}` : ''}
                   </p>

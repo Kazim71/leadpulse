@@ -1,9 +1,11 @@
 export default function AboutPage() {
   return (
-    <section className="mx-auto max-w-2xl px-6 py-20">
-      <h1 className="font-display text-4xl text-ink-900 dark:text-ink-50">About LeadCapsule</h1>
+    <section className="mx-auto max-w-2xl px-6 py-24">
+      <h1 className="font-marketingDisplay text-5xl leading-tight text-black dark:text-white sm:text-6xl">
+        About NorthQu
+      </h1>
 
-      <div className="mt-8 space-y-5 text-base leading-relaxed text-ink-700 dark:text-ink-300">
+      <div className="mt-10 space-y-6 border-l border-neutral-200 dark:border-neutral-800 pl-7 text-lg leading-relaxed text-neutral-600 dark:text-neutral-400">
         <p>
           Every e-commerce or SaaS storefront can tell you what someone bought.
           Almost none of them can tell you about the visit that almost turned
@@ -14,7 +16,7 @@ export default function AboutPage() {
           number or email.
         </p>
         <p>
-          LeadCapsule captures that anonymous behavior as it happens — page
+          NorthQu captures that anonymous behavior as it happens — page
           views, searches, product interest, cart activity — and holds onto
           it. The moment a visitor identifies themselves, at checkout, in a
           WhatsApp message, on a contact form, their entire prior browsing

@@ -23,9 +23,9 @@ const dateFormatter = (iso: string) =>
 function ChartTooltip({ active, payload, label }: any) {
   if (!active || !payload?.length) return null;
   return (
-    <div className="rounded-md border border-ink-200 bg-white px-3 py-2 text-xs shadow-raised dark:border-ink-700 dark:bg-ink-900">
-      <p className="font-medium text-ink-900 dark:text-ink-100">{dateFormatter(label)}</p>
-      <p className="text-ink-600 dark:text-ink-400">{payload[0].value} events</p>
+    <div className="rounded-md border border-neutral-200 bg-white px-3 py-2 text-xs shadow-raised dark:border-neutral-700 dark:bg-black">
+      <p className="font-medium text-black dark:text-neutral-100">{dateFormatter(label)}</p>
+      <p className="text-neutral-600 dark:text-neutral-400">{payload[0].value} events</p>
     </div>
   );
 }
@@ -35,7 +35,7 @@ export function EventsOverTimeChart({ data }: { data: DailyCount[] }) {
 
   if (!hasAnyEvents) {
     return (
-      <div className="flex h-56 items-center justify-center text-sm text-ink-500 dark:text-ink-400">
+      <div className="flex h-56 items-center justify-center text-sm text-neutral-500 dark:text-neutral-400">
         No events in this window yet.
       </div>
     );
@@ -46,21 +46,21 @@ export function EventsOverTimeChart({ data }: { data: DailyCount[] }) {
       <ResponsiveContainer width="100%" height="100%">
         <AreaChart data={data} margin={{ top: 8, right: 8, left: -16, bottom: 0 }}>
           <defs>
-            {/* blush-400, not -500/-600: recharts fills are inline SVG attrs
+            {/* cinnamon-400, not -500/-600: recharts fills are inline SVG attrs
                 and can't take a `dark:` variant, so one shade has to work on
                 both cream and near-black. -400 keeps enough contrast on both
                 without needing a theme-conditional color prop. */}
             <linearGradient id="eventsFill" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="0%" stopColor="#DA8093" stopOpacity={0.4} />
-              <stop offset="100%" stopColor="#DA8093" stopOpacity={0.03} />
+              <stop offset="0%" stopColor="#DA8B66" stopOpacity={0.4} />
+              <stop offset="100%" stopColor="#DA8B66" stopOpacity={0.03} />
             </linearGradient>
           </defs>
-          <CartesianGrid strokeDasharray="3 3" vertical={false} className="stroke-ink-200 dark:stroke-ink-800" />
+          <CartesianGrid strokeDasharray="3 3" vertical={false} className="stroke-neutral-200 dark:stroke-neutral-800" />
           <XAxis
             dataKey="date"
             tickFormatter={dateFormatter}
             tick={{ fontSize: 11, fill: 'currentColor' }}
-            className="text-ink-500 dark:text-ink-400"
+            className="text-neutral-500 dark:text-neutral-400"
             axisLine={false}
             tickLine={false}
             minTickGap={24}
@@ -68,7 +68,7 @@ export function EventsOverTimeChart({ data }: { data: DailyCount[] }) {
           <YAxis
             allowDecimals={false}
             tick={{ fontSize: 11, fill: 'currentColor' }}
-            className="text-ink-500 dark:text-ink-400"
+            className="text-neutral-500 dark:text-neutral-400"
             axisLine={false}
             tickLine={false}
             width={28}
@@ -77,7 +77,7 @@ export function EventsOverTimeChart({ data }: { data: DailyCount[] }) {
           <Area
             type="monotone"
             dataKey="count"
-            stroke="#DA8093"
+            stroke="#DA8B66"
             strokeWidth={2}
             fill="url(#eventsFill)"
           />

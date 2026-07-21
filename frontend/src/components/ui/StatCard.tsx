@@ -7,20 +7,20 @@ import type { Tone } from './Badge';
  * the number is the thing being read.
  */
 const LABEL_TONES: Record<Tone, string> = {
-  neutral: 'text-ink-500 dark:text-ink-400',
-  blush: 'text-blush-700 dark:text-blush-300',
-  lilac: 'text-lilac-700 dark:text-lilac-300',
-  mint: 'text-mint-700 dark:text-mint-300',
-  peach: 'text-peach-700 dark:text-peach-300',
+  neutral: 'text-neutral-500 dark:text-neutral-400',
+  cinnamon: 'text-cinnamon-700 dark:text-cinnamon-300',
+  violet: 'text-violet-700 dark:text-violet-300',
+  emerald: 'text-emerald-700 dark:text-emerald-300',
+  amber: 'text-amber-700 dark:text-amber-300',
   brick: 'text-brick-700 dark:text-brick-300',
 };
 
 const RULE_TONES: Record<Tone, string> = {
-  neutral: 'bg-ink-300 dark:bg-ink-600',
-  blush: 'bg-blush-400',
-  lilac: 'bg-lilac-400',
-  mint: 'bg-mint-400',
-  peach: 'bg-peach-400',
+  neutral: 'bg-neutral-300 dark:bg-neutral-600',
+  cinnamon: 'bg-cinnamon-400',
+  violet: 'bg-violet-400',
+  emerald: 'bg-emerald-400',
+  amber: 'bg-amber-400',
   brick: 'bg-brick-300',
 };
 
@@ -54,25 +54,25 @@ export function StatCard({
         {trend ? <TrendBadge pctChange={trend.pctChange} /> : null}
       </div>
       {/* tabular-nums keeps digits from jittering as values change */}
-      <p className="mt-2 font-display text-3xl tabular-nums text-ink-900 dark:text-ink-50">
+      <p className="mt-2 font-display text-3xl tabular-nums text-black dark:text-white">
         {value}
       </p>
-      {hint ? <p className="mt-1 text-xs text-ink-500 dark:text-ink-400">{hint}</p> : null}
+      {hint ? <p className="mt-1 text-xs text-neutral-500 dark:text-neutral-400">{hint}</p> : null}
     </Card>
   );
 }
 
 function TrendBadge({ pctChange }: { pctChange: number | null }) {
   if (pctChange === null) {
-    return <span className="text-2xs text-ink-400 dark:text-ink-500">new</span>;
+    return <span className="text-2xs text-neutral-400 dark:text-neutral-500">new</span>;
   }
 
   const flat = Math.abs(pctChange) < 1;
   const up = pctChange >= 0;
   const color = flat
-    ? 'text-ink-400 dark:text-ink-500'
+    ? 'text-neutral-400 dark:text-neutral-500'
     : up
-      ? 'text-mint-700 dark:text-mint-300'
+      ? 'text-emerald-700 dark:text-emerald-300'
       : 'text-brick-700 dark:text-brick-300';
 
   return (

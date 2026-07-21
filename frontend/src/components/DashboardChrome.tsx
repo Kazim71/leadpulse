@@ -6,6 +6,7 @@ import { SignOutButton } from './SignOutButton';
 import { SidebarNav } from './SidebarNav';
 import { NotificationBell } from './NotificationBell';
 import { ChevronLeftIcon, CloseIcon, MenuIcon } from './icons';
+import { LogoLockup, LogoMark } from './Logo';
 import type { NavItem } from './AppShell';
 import type { ReadySignalLead } from '@/lib/queries';
 
@@ -65,7 +66,7 @@ export function DashboardChrome({
     <div className="flex min-h-screen">
       {/* ---- desktop sidebar ------------------------------------------- */}
       <aside
-        className={`hidden flex-none flex-col border-r border-ink-200 bg-white py-6 transition-[width] duration-150 dark:border-ink-800 dark:bg-ink-900 lg:flex ${
+        className={`hidden flex-none flex-col border-r border-neutral-200 bg-white py-6 transition-[width] duration-150 dark:border-neutral-800 dark:bg-black lg:flex ${
           collapsed ? 'w-[4.5rem] px-2' : 'w-64 px-4'
         }`}
       >
@@ -74,11 +75,11 @@ export function DashboardChrome({
         </div>
 
         {collapsed ? null : (
-          <div className="mt-8 rounded-lg bg-ink-50 px-3 py-2.5 dark:bg-ink-950/60">
-            <p className="text-2xs font-medium uppercase tracking-wider text-ink-500 dark:text-ink-400">
+          <div className="mt-8 rounded-lg bg-white px-3 py-2.5 dark:bg-black/60">
+            <p className="text-2xs font-medium uppercase tracking-wider text-neutral-500 dark:text-neutral-400">
               {contextSublabel}
             </p>
-            <p className="mt-0.5 truncate text-sm font-medium text-ink-900 dark:text-ink-100">
+            <p className="mt-0.5 truncate text-sm font-medium text-black dark:text-neutral-100">
               {contextLabel}
             </p>
           </div>
@@ -90,7 +91,7 @@ export function DashboardChrome({
           type="button"
           onClick={toggleCollapsed}
           aria-label={collapsed ? 'Expand sidebar' : 'Collapse sidebar'}
-          className={`mt-auto flex items-center gap-2 rounded-md px-3 py-2 text-xs text-ink-500 transition-colors hover:bg-ink-50 hover:text-ink-800 dark:text-ink-400 dark:hover:bg-ink-800 dark:hover:text-ink-100 ${
+          className={`mt-auto flex items-center gap-2 rounded-md px-3 py-2 text-xs text-neutral-500 transition-colors hover:bg-white hover:text-neutral-800 dark:text-neutral-400 dark:hover:bg-neutral-800 dark:hover:text-neutral-100 ${
             collapsed ? 'justify-center' : ''
           }`}
         >
@@ -106,27 +107,27 @@ export function DashboardChrome({
       {mobileOpen ? (
         <div className="fixed inset-0 z-50 lg:hidden">
           <div
-            className="absolute inset-0 bg-ink-950/40"
+            className="absolute inset-0 bg-black/40"
             onClick={() => setMobileOpen(false)}
             aria-hidden
           />
-          <aside className="absolute inset-y-0 left-0 flex w-72 flex-col bg-white px-4 py-6 shadow-pop dark:bg-ink-900">
+          <aside className="absolute inset-y-0 left-0 flex w-72 flex-col bg-white px-4 py-6 shadow-pop dark:bg-black">
             <div className="flex items-center justify-between">
               <Brand collapsed={false} />
               <button
                 type="button"
                 aria-label="Close menu"
                 onClick={() => setMobileOpen(false)}
-                className="flex h-8 w-8 items-center justify-center rounded-md text-ink-500 hover:bg-ink-100 dark:text-ink-400 dark:hover:bg-ink-800"
+                className="flex h-8 w-8 items-center justify-center rounded-md text-neutral-500 hover:bg-neutral-100 dark:text-neutral-400 dark:hover:bg-neutral-800"
               >
                 <CloseIcon />
               </button>
             </div>
-            <div className="mt-8 rounded-lg bg-ink-50 px-3 py-2.5 dark:bg-ink-950/60">
-              <p className="text-2xs font-medium uppercase tracking-wider text-ink-500 dark:text-ink-400">
+            <div className="mt-8 rounded-lg bg-white px-3 py-2.5 dark:bg-black/60">
+              <p className="text-2xs font-medium uppercase tracking-wider text-neutral-500 dark:text-neutral-400">
                 {contextSublabel}
               </p>
-              <p className="mt-0.5 truncate text-sm font-medium text-ink-900 dark:text-ink-100">
+              <p className="mt-0.5 truncate text-sm font-medium text-black dark:text-neutral-100">
                 {contextLabel}
               </p>
             </div>
@@ -138,13 +139,13 @@ export function DashboardChrome({
       ) : null}
 
       <div className="flex min-w-0 flex-1 flex-col">
-        <header className="flex h-16 flex-none items-center justify-between border-b border-ink-200 bg-white px-4 dark:border-ink-800 dark:bg-ink-900 sm:px-6">
+        <header className="flex h-16 flex-none items-center justify-between border-b border-neutral-200 bg-white px-4 dark:border-neutral-800 dark:bg-black sm:px-6">
           <div className="flex items-center gap-3">
             <button
               type="button"
               aria-label="Open menu"
               onClick={() => setMobileOpen(true)}
-              className="flex h-9 w-9 items-center justify-center rounded-md text-ink-600 hover:bg-ink-50 dark:text-ink-300 dark:hover:bg-ink-800 lg:hidden"
+              className="flex h-9 w-9 items-center justify-center rounded-md text-neutral-600 hover:bg-white dark:text-neutral-300 dark:hover:bg-neutral-800 lg:hidden"
             >
               <MenuIcon />
             </button>
@@ -155,7 +156,7 @@ export function DashboardChrome({
 
           <div className="ml-auto flex items-center gap-3">
             <NotificationBell leads={notifications} />
-            <span className="hidden text-xs text-ink-500 dark:text-ink-400 sm:block">{email}</span>
+            <span className="hidden text-xs text-neutral-500 dark:text-neutral-400 sm:block">{email}</span>
             <SignOutButton />
             <ThemeToggle />
           </div>
@@ -168,16 +169,9 @@ export function DashboardChrome({
 }
 
 function Brand({ collapsed }: { collapsed: boolean }) {
-  return (
-    <div className="flex items-center gap-2.5">
-      <span className="flex h-8 w-8 flex-none items-center justify-center rounded-lg bg-blush-600">
-        <span className="h-3.5 w-1.5 rounded-full bg-blush-100" />
-      </span>
-      {collapsed ? null : (
-        <span className="font-display text-lg tracking-tight text-ink-900 dark:text-ink-50">
-          LeadCapsule
-        </span>
-      )}
-    </div>
-  );
+  // Collapsed sidebar shows the monogram alone; expanded shows the full lockup.
+  if (collapsed) {
+    return <LogoMark className="h-8 w-8 flex-none" />;
+  }
+  return <LogoLockup className="h-8 flex-none" />;
 }

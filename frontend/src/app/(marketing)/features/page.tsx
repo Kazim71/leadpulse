@@ -40,17 +40,25 @@ const FEATURES = [
 
 export default function FeaturesPage() {
   return (
-    <section className="mx-auto max-w-3xl px-6 py-20">
-      <h1 className="font-display text-4xl text-ink-900 dark:text-ink-50">Features</h1>
-      <p className="mt-4 text-ink-600 dark:text-ink-400">
+    <section className="mx-auto max-w-3xl px-6 py-24">
+      <h1 className="font-marketingDisplay text-5xl text-black dark:text-white sm:text-6xl">Features</h1>
+      <p className="mt-5 text-lg text-neutral-600 dark:text-neutral-400">
         What&rsquo;s built and working today — not a roadmap.
       </p>
 
-      <div className="mt-12 space-y-10">
-        {FEATURES.map((f) => (
-          <div key={f.title} className="border-l-2 border-blush-300 pl-5 dark:border-blush-800">
-            <h2 className="font-display text-xl text-ink-900 dark:text-ink-100">{f.title}</h2>
-            <p className="mt-1.5 text-sm leading-relaxed text-ink-600 dark:text-ink-400">{f.body}</p>
+      <div className="mt-16 space-y-12">
+        {FEATURES.map((f, i) => (
+          <div
+            key={f.title}
+            className="flex gap-6 border-t border-neutral-200 dark:border-neutral-800 pt-8 first:border-t-0 first:pt-0"
+          >
+            <span className="flex-none font-marketingDisplay text-2xl text-neutral-500 dark:text-neutral-500">
+              {String(i + 1).padStart(2, '0')}
+            </span>
+            <div>
+              <h2 className="font-marketingDisplay text-xl text-black dark:text-white">{f.title}</h2>
+              <p className="mt-2 text-base leading-relaxed text-neutral-600 dark:text-neutral-400">{f.body}</p>
+            </div>
           </div>
         ))}
       </div>

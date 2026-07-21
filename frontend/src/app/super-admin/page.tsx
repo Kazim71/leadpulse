@@ -23,8 +23,8 @@ export default async function SuperAdminPage() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="font-display text-3xl text-ink-900 dark:text-ink-50">Companies</h1>
-        <p className="mt-1 text-sm text-ink-500 dark:text-ink-400">
+        <h1 className="font-display text-3xl text-black dark:text-white">Companies</h1>
+        <p className="mt-1 text-sm text-neutral-500 dark:text-neutral-400">
           {organizations.length} {organizations.length === 1 ? 'organization' : 'organizations'} on
           the platform
         </p>
@@ -32,7 +32,7 @@ export default async function SuperAdminPage() {
 
       <Card>
         <CardHeader>
-          <h2 className="font-display text-lg text-ink-900 dark:text-ink-100">
+          <h2 className="font-display text-lg text-black dark:text-neutral-100">
             Events across all organizations, last {platformEvents.length} days
           </h2>
         </CardHeader>

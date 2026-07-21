@@ -17,7 +17,7 @@ const sans = DM_Sans({
 });
 
 export const metadata: Metadata = {
-  title: 'LeadCapsule',
+  title: 'NorthQu',
   description: 'Turn anonymous storefront traffic into known leads.',
 };
 

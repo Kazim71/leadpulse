@@ -1,119 +1,125 @@
 import type { Config } from 'tailwindcss';
 
 /**
- * LeadCapsule design tokens.
+ * NorthQu design tokens.
  *
- * PALETTE RATIONALE
- * -----------------
- * The base is unchanged and deliberately so: a warm, brown-tinted neutral
- * ramp (`ink`) over cream surfaces. Every generic dashboard palette — navy
- * +gold, mint fintech, purple gradient — is COLD, and the quiet decision
- * that keeps this one from reading as templated is that no gray here is
- * blue. That stays.
+ * BRAND PALETTE (added on the most recent rebrand — see docs/CHANGELOG.md
+ * for the full naming history)
+ * --------------------------------------------------------
+ * Two candidate palettes were provided for this rebrand, identical except
+ * for one accent and one indigo shade:
+ *   A: Space Indigo #293049, White, Cinnamon Wood #C67155, Black, Ivory
+ *   B: Space Indigo #17274F, White, Wine Plum   #763D44, Black, Ivory
  *
- * WHAT CHANGED: the previous palette had a single terracotta accent doing
- * every job at once — primary actions, active nav, status badges, category
- * tags, and chart bars. One hue carrying five meanings means color conveys
- * nothing; everything is just "the accent". It now resolves into a family
- * of four soft pastels that sit on the warm base like paper tags on kraft
- * card:
+ * CHOSE PALETTE A — Cinnamon Wood. Reasoning: this project has a standing
+ * rule (see the pastel-accent rationale below) that no gray/neutral here
+ * is ever cold/blue-tinted; Cinnamon Wood is a warm rust that continues
+ * that rule, while Wine Plum is a cooler, more muted burgundy that would
+ * cut against it. Concretely, Cinnamon Wood (#C67155) is close enough to
+ * the marketing site's PRE-EXISTING accent from the prior dark-editorial
+ * redesign (#C97B52, a "muted, desaturated rust") that adopting it barely
+ * disturbs what's already there visually — it reads as formalizing the
+ * existing accent into the real brand color, not replacing it with
+ * something unrelated. Palette B's Wine Plum would have meant re-deciding
+ * the marketing site's whole warm-toned type/shadow system from scratch.
+ * Space Indigo's two variants (#293049 vs #17274F) are both dark
+ * blue-violets close enough that the choice was effectively decided by
+ * the accent alone.
  *
- *   blush   — dusty pink.  PRIMARY. Actions, active nav, focus rings, brand
- *             mark, link hovers. Warm enough to belong to the cream base
- *             while being clearly its own hue rather than a darker cream.
- *   lilac   — lavender.    The one cool note. Cool-on-warm is what makes a
- *             pastel-block layout read as designed rather than tonal, and
- *             it carries "handled / done" states.
- *   mint    — soft green.  Healthy/ready states. Desaturated and slightly
- *             grey so it stays a pastel, never the fintech success toast.
- *   peach   — warm apricot. Waiting/caution states and one-time secrets.
- *             Inherits the warmth the old terracotta used to supply, but
- *             now as one voice among four instead of the only one.
+ * ---------------------------------------------------------------------
+ * 2026-07-21 — cross-cutting consistency pass (superseding both notes
+ * above): `ink`, `blush`, `lilac`, `mint`, and `peach` are REMOVED. They
+ * were never fully propagated — the marketing site got the new brand
+ * palette, but `login/`, `dashboard/`, and `super-admin/` kept rendering
+ * the old warm-cream `ink` background and old pastel `blush` accent,
+ * which is exactly the inconsistency this pass fixes. The whole app now
+ * shares ONE rule: white background / black text in light mode, dark
+ * background / light text in dark mode, black footer always, Cinnamon
+ * Wood (`brand.cinnamon`) for every primary action/button, ivory only for
+ * secondary section backgrounds that already intentionally used it.
+ * `white`/`black` below are literal Tailwind built-ins (not redefined);
+ * secondary/tertiary text and borders use Tailwind's stock `neutral`
+ * ramp (also not redefined here — it ships with Tailwind and needed no
+ * project-specific warm tint once the brand system existed to carry
+ * that job instead).
  *
- * Each accent is a full 50→950 ramp rather than a single tint, because
- * pastels do not survive dark mode by being lightened — washed-out pastel
- * on near-black is illegible and loses all hue identity. The pattern used
- * throughout is: LIGHT = 100 surface + 800 text; DARK = 950 surface + 300
- * text. Both ends stay saturated enough to read as the same colour, so a
- * mint badge is recognisably mint in either theme.
+ * The marketing site's `dark-only` decision is ALSO reversed this pass,
+ * per explicit instruction: it now supports both themes via the same
+ * `next-themes` toggle the dashboard already used, defaulting to light
+ * (white/black/cinnamon).
  *
- * `brick` remains for destructive/error only. It is intentionally NOT part
- * of the accent family — an error must never be mistakable for a category
- * tag.
+ * SAME-DAY FOLLOW-UP: page-level dark mode does NOT use `marketing.*`
+ * (Space Indigo) — explicit feedback was that marketing's dark mode
+ * should match the dashboard's own dark mode exactly (black), not
+ * indigo. `marketing.*` below is now scoped to ONE consumer only —
+ * `SiteFooter`, which uses it UNCONDITIONALLY (Space Indigo in both
+ * light AND dark page-themes, not paired with `dark:`) — Indigo is the
+ * footer's permanent color, independent of the page's own theme state.
+ * Every other marketing surface (body, header, cards) now shares the
+ * dashboard's literal `white`/`black`/`neutral-*` tokens directly rather
+ * than going through this namespace.
+ *
+ * `blush`'s old categorical role (one of four rotating hues for status
+ * badges / category tags / chart bars) is now filled by three Tailwind
+ * stock hues — `violet` (was `lilac`), `emerald` (was `mint`), `amber`
+ * (was `peach`) — not four. `blush` itself is not replaced 1:1 in that
+ * rotation: it was ALSO documented as "PRIMARY" (the single brand accent)
+ * before Cinnamon Wood existed, and reusing `cinnamon` there would
+ * reintroduce the exact problem that rotation was built to avoid — "one
+ * hue carrying five meanings" — since cinnamon is now reserved
+ * exclusively for primary actions/buttons. Everywhere `StatCard`/`Badge`
+ * need to highlight something as "the primary one" (e.g. the lead
+ * "Contacts" stat), `tone="cinnamon"` is available explicitly — same
+ * pattern `brick` (errors) already used: declared, usable by name, never
+ * auto-assigned by the category-hash rotation.
  */
+// The five raw NorthQu brand colors, defined once so `marketing.*` (and,
+// later, the dashboard re-theme) derive from these rather than repeating
+// hex literals. Kept as a plain object outside `colors` so values below
+// can reference each other in comments/derivation without Tailwind's
+// config type getting in the way.
+const brand = {
+  indigo: '#293049', // Space Indigo — dark base / secondary accent
+  white: '#FFFFFF', // primary background (light surfaces)
+  cinnamon: '#C67155', // Cinnamon Wood — primary accent: CTAs, hover/active
+  cinnamonHover: '#CF866F', // Cinnamon Wood lightened ~15% toward white
+  black: '#000000', // footer background, site-wide; primary dark text
+  ivory: '#F6F6E9', // secondary section/card background; warm off-white text
+};
+
 const config: Config = {
   darkMode: 'class',
   content: ['./src/**/*.{ts,tsx}'],
   theme: {
     extend: {
       colors: {
-        // ---- warm neutral base (unchanged) ----------------------------
-        ink: {
-          50: '#F8F7F5',
-          100: '#F1EEE9',
-          200: '#E3DED6',
-          300: '#CEC7BB',
-          400: '#A9A093',
-          500: '#877D6F',
-          600: '#6C6357',
-          700: '#575046',
-          800: '#46413A',
-          900: '#2F2C27',
-          950: '#1A1815',
-        },
+        // ---- NorthQu brand tokens (this rebrand) ------------------------
+        // Named tokens, not raw hex scattered through components. The
+        // dashboard re-theme (queued next) is expected to consume these
+        // directly as its light-mode base.
+        brand,
 
-        // ---- pastel accent family --------------------------------------
-        blush: {
-          50: '#FDF4F5',
-          100: '#FAE7EA',
-          200: '#F4CDD4',
-          300: '#E9A9B5',
-          400: '#DA8093',
-          500: '#C75F77',
-          600: '#B04A62',
-          700: '#8F3B50',
-          800: '#763343',
-          900: '#632E3A',
-          950: '#37151C',
-        },
-        lilac: {
-          50: '#F7F5FC',
-          100: '#EFEBF9',
-          200: '#DFD7F2',
-          300: '#C7B9E7',
-          400: '#AB96D8',
-          500: '#9075C6',
-          600: '#785BAE',
-          700: '#63498F',
-          800: '#533E75',
-          900: '#463661',
-          950: '#281C3A',
-        },
-        mint: {
-          50: '#F1FAF6',
-          100: '#DFF3EA',
-          200: '#BFE6D5',
-          300: '#93D3B8',
-          400: '#63BA97',
-          500: '#3F9E7B',
-          600: '#2E8064',
-          700: '#276651',
-          800: '#235243',
-          900: '#1F4439',
-          950: '#0E2620',
-        },
-        peach: {
-          50: '#FEF6F0',
-          100: '#FCEADD',
-          200: '#F8D2BA',
-          300: '#F1B28C',
-          400: '#E88C5B',
-          500: '#DC6D38',
-          600: '#C5552A',
-          700: '#A34124',
-          800: '#843725',
-          900: '#6D3021',
-          950: '#3A1610',
+        // ---- Cinnamon Wood ramp ------------------------------------------
+        // Full 50→950 ramp (not just the base + hover already on `brand`)
+        // so every existing shade of the old `blush` primary-accent usage
+        // (bg-*-600 buttons, text-*-700 links, bg-*-100/dark:bg-*-950
+        // badge surfaces, focus rings, ...) has a direct replacement.
+        // Same lightness distribution as the old `blush` ramp it replaces,
+        // recentered on Cinnamon Wood's hue (~14°) instead of blush's dusty
+        // pink (~350°); 500 is deliberately `brand.cinnamon` itself so the
+        // ramp and the single named brand color agree exactly.
+        cinnamon: {
+          50: '#FDF4F1',
+          100: '#FAE6DE',
+          200: '#F4CCBB',
+          300: '#E9AB8C',
+          400: '#DA8B66',
+          500: '#C67155',
+          600: '#B0603F',
+          700: '#8F4A32',
+          800: '#763D29',
+          900: '#633423',
+          950: '#371B10',
         },
 
         // ---- destructive only, kept out of the accent family ------------
@@ -124,6 +130,54 @@ const config: Config = {
           700: '#8B3626',
           900: '#4C1E16',
         },
+
+        // ---- marketing site: SiteFooter's permanent (unconditional) colors ----
+        // NOT a page-wide dark-mode variant (that idea was tried, then
+        // corrected same-day — see the note atop this file). `bg` is used
+        // by exactly one consumer, `SiteFooter`, WITHOUT a `dark:` pairing
+        // — Space Indigo is the footer's color in both the site's light
+        // and dark states, since the footer is the one surface that
+        // doesn't follow the page's own light/black theme switch.
+        // `text`/`textDim`/`textFaint`/`border` are also footer-only now
+        // (same reason: contrast-tuned against Indigo specifically, which
+        // only the footer still uses as a background). `accent`/
+        // `accentHover` (Cinnamon Wood) remain general-purpose — e.g.
+        // CursorGlow's ring — since the accent color itself didn't change.
+        //   bg          — Space Indigo (`brand.indigo`), SiteFooter's
+        //                  background, unconditionally.
+        //   surface / surfaceHover — indigo lightened ~8%/~14% toward
+        //                  white; currently unused (no footer sub-panel
+        //                  needs an elevated surface yet) but kept as the
+        //                  obvious next step if one is added.
+        //   border      — indigo lightened ~20%; SiteFooter's hairline
+        //                  dividers.
+        //   text        — Ivory (`brand.ivory`), SiteFooter's primary copy
+        //                  (the logo's implicit color context).
+        //   textDim     — ivory blended 60/40 toward indigo; SiteFooter's
+        //                  nav links.
+        //   textFaint   — ivory blended 55/45 toward indigo; SiteFooter's
+        //                  column labels and copyright line. Blended less
+        //                  than `text`/`textDim` (60% ivory) so the
+        //                  dim→faint hierarchy still holds, but blended
+        //                  MORE than an initial 35% pass — that first
+        //                  value measured at 2.83:1 against `bg`, failing
+        //                  even WCAG AA-large (3:1); 55% clears AA-normal
+        //                  (4.5:1) with margin (see
+        //                  test/verify-theme-consistency.mjs).
+        //   accent      — Cinnamon Wood (`brand.cinnamon`), used SPARINGLY
+        //                  for decorative accents (e.g. CursorGlow's ring).
+        //   accentHover — `brand.cinnamonHover`.
+        marketing: {
+          bg: brand.indigo,
+          surface: '#3A4158',
+          surfaceHover: '#474D62',
+          border: '#54596D',
+          text: brand.ivory,
+          textDim: '#A4A7A9',
+          textFaint: '#9A9DA1',
+          accent: brand.cinnamon,
+          accentHover: brand.cinnamonHover,
+        },
       },
       fontFamily: {
         // Serif display for headings only — the single strongest signal
@@ -132,6 +186,12 @@ const config: Config = {
         display: ['var(--font-display)', 'Georgia', 'serif'],
         sans: ['var(--font-sans)', 'system-ui', 'sans-serif'],
         mono: ['ui-monospace', 'SFMono-Regular', 'Menlo', 'monospace'],
+        // Marketing-only display serif — see (marketing)/layout.tsx for
+        // why this is a second, distinct serif rather than reusing
+        // `display` (Fraunces): the dashboard keeps Fraunces, so the
+        // public site gets its own type identity instead of the two
+        // surfaces sharing a headline font by accident.
+        marketingDisplay: ['var(--font-marketing-display)', 'Georgia', 'serif'],
       },
       fontSize: {
         // Tighter than Tailwind's defaults. Dashboards are read at a

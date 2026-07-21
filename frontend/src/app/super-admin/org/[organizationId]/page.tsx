@@ -46,12 +46,12 @@ export default async function SuperAdminOrgPage({
       <div>
         <Link
           href="/super-admin"
-          className="text-xs font-medium text-ink-500 transition-colors hover:text-blush-700 dark:text-ink-400 dark:hover:text-blush-400"
+          className="text-xs font-medium text-neutral-500 transition-colors hover:text-cinnamon-700 dark:text-neutral-400 dark:hover:text-cinnamon-400"
         >
           ← All companies
         </Link>
-        <h1 className="mt-2 font-display text-3xl text-ink-900 dark:text-ink-50">{org.name}</h1>
-        <p className="mt-1 text-sm text-ink-500 dark:text-ink-400">
+        <h1 className="mt-2 font-display text-3xl text-black dark:text-white">{org.name}</h1>
+        <p className="mt-1 text-sm text-neutral-500 dark:text-neutral-400">
           {org.industry ?? 'Uncategorized'} · {org.slug}
         </p>
       </div>
@@ -59,7 +59,7 @@ export default async function SuperAdminOrgPage({
       <SummaryPanel summary={summary} eventsOverTime={eventsOverTime} eventTrend={eventTrend} />
 
       <div>
-        <h2 className="mb-4 font-display text-2xl text-ink-900 dark:text-ink-50">Leads</h2>
+        <h2 className="mb-4 font-display text-2xl text-black dark:text-white">Leads</h2>
         <LeadsTable leads={leads} />
       </div>
     </div>

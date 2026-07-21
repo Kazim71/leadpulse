@@ -94,8 +94,8 @@ function CreateOrgForm({
   return (
     <Card>
       <CardHeader>
-        <h2 className="font-display text-xl text-ink-900 dark:text-ink-100">Create organization</h2>
-        <p className="mt-1 text-xs text-ink-500 dark:text-ink-400">
+        <h2 className="font-display text-xl text-black dark:text-neutral-100">Create organization</h2>
+        <p className="mt-1 text-xs text-neutral-500 dark:text-neutral-400">
           Generates the API key the tracking snippet will use for this client.
         </p>
       </CardHeader>
@@ -114,10 +114,10 @@ function CreateOrgForm({
         </form>
 
         {result ? (
-          <div className="space-y-3 border-t border-ink-200 pt-4 dark:border-ink-800">
-            <p className="text-sm text-ink-700 dark:text-ink-300">
+          <div className="space-y-3 border-t border-neutral-200 pt-4 dark:border-neutral-800">
+            <p className="text-sm text-neutral-700 dark:text-neutral-300">
               Created <span className="font-medium">{result.name}</span>{' '}
-              <span className="font-mono text-xs text-ink-500">({result.slug})</span>
+              <span className="font-mono text-xs text-neutral-500">({result.slug})</span>
             </p>
             <SecretReveal
               label="API key"
@@ -175,8 +175,8 @@ function InviteAdminForm({
   return (
     <Card>
       <CardHeader>
-        <h2 className="font-display text-xl text-ink-900 dark:text-ink-100">Invite an admin</h2>
-        <p className="mt-1 text-xs text-ink-500 dark:text-ink-400">
+        <h2 className="font-display text-xl text-black dark:text-neutral-100">Invite an admin</h2>
+        <p className="mt-1 text-xs text-neutral-500 dark:text-neutral-400">
           Creates the login and links it to one organization.
         </p>
       </CardHeader>
@@ -197,7 +197,7 @@ function InviteAdminForm({
               required
               value={organizationId}
               onChange={(e) => setOrganizationId(e.target.value)}
-              className="w-full rounded-md border border-ink-200 bg-white px-3 py-2 text-sm text-ink-900 dark:border-ink-700 dark:bg-ink-900 dark:text-ink-100"
+              className="w-full rounded-md border border-neutral-200 bg-white px-3 py-2 text-sm text-black dark:border-neutral-700 dark:bg-black dark:text-neutral-100"
             >
               <option value="">Select an organization…</option>
               {organizations.map((org) => (
@@ -213,7 +213,7 @@ function InviteAdminForm({
             <select
               value={role}
               onChange={(e) => setRole(e.target.value)}
-              className="w-full rounded-md border border-ink-200 bg-white px-3 py-2 text-sm text-ink-900 dark:border-ink-700 dark:bg-ink-900 dark:text-ink-100"
+              className="w-full rounded-md border border-neutral-200 bg-white px-3 py-2 text-sm text-black dark:border-neutral-700 dark:bg-black dark:text-neutral-100"
             >
               <option value="owner">owner</option>
               <option value="admin">admin</option>
@@ -226,8 +226,8 @@ function InviteAdminForm({
         </form>
 
         {result ? (
-          <div className="space-y-3 border-t border-ink-200 pt-4 dark:border-ink-800">
-            <p className="text-sm text-ink-700 dark:text-ink-300">
+          <div className="space-y-3 border-t border-neutral-200 pt-4 dark:border-neutral-800">
+            <p className="text-sm text-neutral-700 dark:text-neutral-300">
               <span className="font-medium">{result.email}</span> can now sign in and will land on{' '}
               {result.organizationName}&apos;s dashboard.
             </p>
@@ -245,7 +245,7 @@ function InviteAdminForm({
 
 function FieldLabel({ children }: { children: React.ReactNode }) {
   return (
-    <span className="mb-1.5 block text-2xs font-medium uppercase tracking-wider text-ink-500 dark:text-ink-400">
+    <span className="mb-1.5 block text-2xs font-medium uppercase tracking-wider text-neutral-500 dark:text-neutral-400">
       {children}
     </span>
   );
@@ -277,9 +277,9 @@ function TextField({
         required={required}
         placeholder={placeholder}
         onChange={(e) => onChange(e.target.value)}
-        className="w-full rounded-md border border-ink-200 bg-white px-3 py-2 text-sm text-ink-900 placeholder:text-ink-400 focus:border-blush-400 dark:border-ink-700 dark:bg-ink-900 dark:text-ink-100"
+        className="w-full rounded-md border border-neutral-200 bg-white px-3 py-2 text-sm text-black placeholder:text-neutral-400 focus:border-cinnamon-400 dark:border-neutral-700 dark:bg-black dark:text-neutral-100"
       />
-      {hint ? <span className="mt-1 block text-xs text-ink-500 dark:text-ink-400">{hint}</span> : null}
+      {hint ? <span className="mt-1 block text-xs text-neutral-500 dark:text-neutral-400">{hint}</span> : null}
     </label>
   );
 }
@@ -297,7 +297,7 @@ function SubmitButton({ pending, children }: { pending: boolean; children: React
     <button
       type="submit"
       disabled={pending}
-      className="w-full rounded-md bg-blush-600 px-4 py-2.5 text-sm font-medium text-white transition-colors hover:bg-blush-700 disabled:cursor-not-allowed disabled:opacity-60"
+      className="w-full rounded-md bg-cinnamon-600 px-4 py-2.5 text-sm font-medium text-white transition-colors hover:bg-cinnamon-700 disabled:cursor-not-allowed disabled:opacity-60"
     >
       {pending ? 'Working…' : children}
     </button>

@@ -81,7 +81,7 @@ export function AuthForm({ mode }: { mode: 'login' | 'signup' }) {
         </p>
       ) : null}
       {notice ? (
-        <p className="rounded-md bg-mint-100 px-3 py-2 text-xs text-mint-800 dark:bg-mint-950 dark:text-mint-300">
+        <p className="rounded-md bg-emerald-100 px-3 py-2 text-xs text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300">
           {notice}
         </p>
       ) : null}
@@ -89,7 +89,7 @@ export function AuthForm({ mode }: { mode: 'login' | 'signup' }) {
       <button
         type="submit"
         disabled={pending}
-        className="w-full rounded-md bg-blush-600 px-4 py-2.5 text-sm font-medium text-white transition-colors hover:bg-blush-700 disabled:cursor-not-allowed disabled:opacity-60"
+        className="w-full rounded-md bg-cinnamon-600 px-4 py-2.5 text-sm font-medium text-white transition-colors hover:bg-cinnamon-700 disabled:cursor-not-allowed disabled:opacity-60"
       >
         {pending ? 'Working…' : mode === 'signup' ? 'Create account' : 'Sign in'}
       </button>
@@ -114,7 +114,7 @@ function Field({
 }) {
   return (
     <label className="block">
-      <span className="mb-1.5 block text-2xs font-medium uppercase tracking-wider text-ink-500 dark:text-ink-400">
+      <span className="mb-1.5 block text-2xs font-medium uppercase tracking-wider text-neutral-500 dark:text-neutral-400">
         {label}
       </span>
       <input
@@ -123,7 +123,7 @@ function Field({
         required={required}
         autoComplete={autoComplete}
         onChange={(e) => onChange(e.target.value)}
-        className="w-full rounded-md border border-ink-200 bg-white px-3 py-2 text-sm text-ink-900 placeholder:text-ink-400 focus:border-blush-400 dark:border-ink-700 dark:bg-ink-900 dark:text-ink-100"
+        className="w-full rounded-md border border-neutral-200 bg-white px-3 py-2 text-sm text-black placeholder:text-neutral-400 focus:border-cinnamon-400 dark:border-neutral-700 dark:bg-black dark:text-neutral-100"
       />
     </label>
   );

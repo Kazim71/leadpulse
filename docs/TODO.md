@@ -64,6 +64,49 @@ not a quick fix.
 
 ## Not built yet
 
+### NorthQu domain/trademark clearance — not verified
+Two rebrands deep now: LeadCapsule → Northcue (2026-07-20) → NorthQu
+(2026-07-21), display-name and visual-identity changes only both times.
+**No automated process has checked or can check** whether "NorthQu" is
+available as a domain, free of existing trademark conflicts, or otherwise
+clear to use commercially — that requires a domain registrar lookup and a
+trademark search, both human judgment calls outside what this codebase or
+its tooling can verify. This remains the user's responsibility before the
+name is used publicly beyond this dashboard.
+
+### ~~Dashboard light/orange-red redesign~~ — done 2026-07-21
+Was requested, then flagged as not-yet-started in this file for one day.
+**Resolved as part of the 2026-07-21 cross-cutting consistency pass**
+(see docs/CHANGELOG.md): `/login`, `/dashboard`, and `/super-admin` no
+longer use the old `ink`/`blush`/`lilac`/`mint`/`peach` tokens at all —
+migrated to literal white/black + the `cinnamon` ramp, matching the
+marketing site's system. The marketing site ALSO stopped being dark-only
+in the same pass (it now defaults light with a dark toggle, same as the
+dashboard), so the "deliberately different palettes" divergence this
+entry used to describe no longer exists — both surfaces now share one
+light-default/dark-toggle system built on the same `brand.*` tokens.
+
+### Logo mark is a raster PNG, not vector — accepted tradeoff
+**Where:** `frontend/src/components/Logo.tsx`,
+`frontend/public/brand/northqu-icon-{light,dark}.png`. A hand-built,
+fully vector, `currentColor`-adaptive SVG mark was built first and met
+every stated requirement; the user then explicitly chose to use provided
+Canva artwork instead, after being shown that it's a flattened raster
+(bevels/gradients baked in) with one problem the user's description
+didn't anticipate (a full-canvas opaque background layer, since removed).
+Two fixed-color PNG variants (light/dark) now stand in for what a single
+adaptive vector asset used to do. **Unblocks when:** if true vector
+crispness at arbitrary sizes is wanted later, the original hand-built
+SVG approach (2 shapes: a stroked ring + one accent-color path) is a
+known-working fallback — see docs/CHANGELOG.md's 2026-07-21 entry for
+why it was set aside, not because it didn't work.
+
+### Dashboard UI/UX feature pass — requested, not started
+Interactive calendar-popover date range picker, a radial/donut progress
+ring for the "Identified %" stat, inline sparklines on stat cards, chart
+polish, and sortable Leads-table columns with a smooth expand/collapse
+transition — all requested in the same batch. Not attempted yet.
+
 ### Shopify integration — partially live, product/search/category pending
 **Update 2026-07-20:** this is no longer "never pasted" — the tracker
 bundle is loaded on a real Shopify theme ("Aarav Electronics," a

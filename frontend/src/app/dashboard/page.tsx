@@ -22,8 +22,8 @@ export default async function LeadsPage() {
 function PageHeading({ title, subtitle }: { title: string; subtitle: string }) {
   return (
     <div>
-      <h1 className="font-display text-3xl text-ink-900 dark:text-ink-50">{title}</h1>
-      <p className="mt-1 text-sm text-ink-500 dark:text-ink-400">{subtitle}</p>
+      <h1 className="font-display text-3xl text-black dark:text-white">{title}</h1>
+      <p className="mt-1 text-sm text-neutral-500 dark:text-neutral-400">{subtitle}</p>
     </div>
   );
 }

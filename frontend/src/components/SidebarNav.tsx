@@ -56,8 +56,8 @@ export function SidebarNav({
               collapsed ? 'justify-center' : ''
             } ${
               active
-                ? 'bg-blush-50 font-medium text-blush-800 dark:bg-blush-950/60 dark:text-blush-300'
-                : 'text-ink-600 hover:bg-ink-50 hover:text-ink-900 dark:text-ink-400 dark:hover:bg-ink-800 dark:hover:text-ink-100'
+                ? 'bg-cinnamon-50 font-medium text-cinnamon-800 dark:bg-cinnamon-950/60 dark:text-cinnamon-300'
+                : 'text-neutral-600 hover:bg-white hover:text-black dark:text-neutral-400 dark:hover:bg-neutral-800 dark:hover:text-neutral-100'
             }`}
           >
             <span className="flex-none">{item.icon}</span>
@@ -66,7 +66,7 @@ export function SidebarNav({
             {collapsed ? (
               <span
                 role="tooltip"
-                className="pointer-events-none absolute left-full z-50 ml-2 hidden whitespace-nowrap rounded-md bg-ink-900 px-2 py-1 text-xs text-ink-50 shadow-pop group-hover:block dark:bg-ink-100 dark:text-ink-900"
+                className="pointer-events-none absolute left-full z-50 ml-2 hidden whitespace-nowrap rounded-md bg-black px-2 py-1 text-xs text-white shadow-pop group-hover:block dark:bg-neutral-100 dark:text-black"
               >
                 {item.label}
               </span>
